@@ -1,0 +1,25 @@
+name: encoding-io
+version: 0.0.1
+synopsis: Encoding-aware file I/O.
+category: Data
+maintainer: Shao Cheng <astrohavoc@gmail.com>
+copyright: (c) 2016 Shao Cheng
+license: BSD3
+github: TerrorJack/encoding-io
+
+extra-source-files:
+    - README.md
+
+ghc-options: -Wall
+
+default-extensions:
+    - FlexibleContexts
+
+dependencies:
+    - base >= 4.8 && < 4.10
+    - chunked-data
+    - deepseq
+    - transformers-base
+
+library:
+    source-dirs: src

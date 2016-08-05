@@ -1,0 +1,50 @@
+language: c
+
+git:
+  depth: 1
+
+cache:
+  directories:
+    - $HOME/.stack/
+    - $TRAVIS_BUILD_DIR/.stack-work/
+
+matrix:
+  include:
+    - env: RESOLVER=nightly GHCVER=8.0.1 ARCH=x86_64
+      addons: {apt: {packages: [ghc-8.0.1], sources: [hvr-ghc]}}
+      os: linux
+
+    - env: RESOLVER=lts-6 GHCVER=7.10.3 ARCH=x86_64
+      addons: {apt: {packages: [ghc-7.10.3], sources: [hvr-ghc]}}
+      os: linux
+
+    - env: RESOLVER=nightly ARCH=x86_64
+      os: osx
+
+    - env: RESOLVER=lts-6 ARCH=x86_64
+      os: osx
+
+    - env: RESOLVER=nightly ARCH=i386
+      os: osx
+
+    - env: RESOLVER=lts-6 ARCH=i386
+      os: osx
+
+before_install:
+  - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+  - mkdir -p ~/.local/bin
+  - export PATH=~/.local/bin:$PATH
+  - |
+    if [ `uname` = "Darwin" ]
+    then
+      travis_retry curl -L https://www.stackage.org/stack/osx-x86_64 | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+    else
+      travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+    fi
+  - chmod +x ~/.local/bin/stack
+  - stack setup --arch $ARCH --resolver $RESOLVER
+
+install: true
+
+script:
+  - stack build --arch $ARCH --resolver $RESOLVER --haddock --no-haddock-deps --test
